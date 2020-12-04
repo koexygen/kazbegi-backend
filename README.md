@@ -1,1 +1,0 @@
-# kazbegi-backend
