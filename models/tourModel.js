@@ -34,7 +34,7 @@ const tourSchema = new mongoose.Schema({
     min: 150
   },
   priceDiscount: Number,
-  summery: {
+  summary: {
     type: String,
     trim: true,
     required: [true, "tour must have description"]
