@@ -5,7 +5,7 @@ const bcrypt = require("bcryptjs");
 const userSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: [true, "please provide ur name"]
+    required: [true, "please provide ur name"],
   },
 
   email: {
@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     required: [true, "Please provide your email address"],
     unique: true,
     lowercase: true,
-    validate: [validator.isEmail, "please provide a valid email address"]
+    validate: [validator.isEmail, "please provide a valid email address"],
   },
 
   photo: String,
@@ -21,21 +21,21 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: [true, "Please provide a password"],
-    minlength: 6
+    minlength: 6,
   },
   passwordConfirm: {
     type: String,
     required: [true, "Please confirm a password"],
     validate: {
-      validator: function(value) {
+      validator: function (value) {
         return value === this.password;
       },
-      message: "Password confirmation failed"
-    }
-  }
+      message: "Password confirmation failed",
+    },
+  },
 });
 
-userSchema.pre("save", async function(next) {
+userSchema.pre("save", async function (next) {
   if (!this.isModified("password")) return next();
 
   this.password = await bcrypt.hash(this.password, 10);
