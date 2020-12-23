@@ -1,3 +1,4 @@
+const { promisify } = require("util");
 const User = require("../models/userModel");
 const catchAsync = require("../utils/catchAsync");
 const jwt = require("jsonwebtoken");
@@ -62,5 +63,18 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError("You are not logged in, please login to get access", 401)
     );
 
+  const decoded = await promisify(jwt.verify)(token, process.env.JWT_SECRET);
+
+  const foundUser = await User.findById(decoded.id);
+
+  if (!foundUser)
+    next(new AppError("User belonging to this token was deleted.", 401));
+
+  if (User.changedPasswordAfter(decoded.iat))
+    next(
+      new AppError("Password has changed recently, please login again", 401)
+    );
+
+  req.user = foundUser;
   next();
 });

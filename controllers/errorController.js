@@ -1,17 +1,23 @@
 const AppError = require("../utils/appError");
 
-const handleCastErrorDB = err => {
+const handleJWT = (err) =>
+  new AppError("Invalid Token, please login again", 401);
+
+const handleJWTExpired = (error) =>
+  new AppError("Session expired, please log in again.", 401);
+
+const handleCastErrorDB = (err) => {
   const message = `invalid error ${err.path}: ${err.value}`;
   return new AppError(message, 400);
 };
-const handleErrorDuplicateDB = err => {
+const handleErrorDuplicateDB = (err) => {
   const value = err.errmsg.match(/(["'])(\\?.)*?\1/);
   const message = `Duplicate field value: ${value}, please change the value!`;
   return new AppError(message, 400);
 };
 
-const handleValidationErrorDB = err => {
-  const errors = err.values().map(err => err.message);
+const handleValidationErrorDB = (err) => {
+  const errors = err.values().map((err) => err.message);
   const message = `invalid input data. ${errors.join(". ")}`;
 
   return new AppError(message, 400);
@@ -22,7 +28,7 @@ const sendErrorDev = (err, res) => {
     status: err.status,
     error: err,
     message: err.message,
-    stack: err.stack
+    stack: err.stack,
   });
 };
 
@@ -30,19 +36,17 @@ const sendErrorProd = (err, res) => {
   if (err.isOperational) {
     res.status(err.statusCode).json({
       status: err.status,
-      message: err.message
+      message: err.message,
     });
   } else {
     console.error(err);
 
     res.status(500).json({
       status: "fail",
-      message: "something went wrong...!"
+      message: "something went wrong...!",
     });
   }
 };
-
-
 
 module.exports = (err, req, res, next) => {
   err.statusCode = err.statusCode || 500;
@@ -57,6 +61,8 @@ module.exports = (err, req, res, next) => {
     if (error.code === 11000) error = handleErrorDuplicateDB(error);
     if (error.name === "ValidationError")
       error = handleValidationErrorDB(error);
+    if (error.name === "JsonWebTokenError") error = handleJWT(error);
+    if (error.name === "TokenExpiredError") error = handleJWTExpired(error);
 
     sendErrorProd(error, res);
   }
