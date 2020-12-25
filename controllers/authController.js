@@ -37,7 +37,7 @@ exports.login = catchAsync(async (req, res, next) => {
 
   const user = await User.findOne({ email }).select("+password");
 
-  if (!user || !(await User.correctPassword(password, user.password))) {
+  if (!user || !(await user.correctPassword(password, user.password))) {
     return next(new AppError("Invalid email or password"), 401);
   }
 
@@ -70,7 +70,7 @@ exports.protect = catchAsync(async (req, res, next) => {
   if (!foundUser)
     next(new AppError("User belonging to this token was deleted.", 401));
 
-  if (User.changedPasswordAfter(decoded.iat))
+  if (foundUser.changedPasswordAfter(decoded.iat))
     next(
       new AppError("Password has changed recently, please login again", 401)
     );
