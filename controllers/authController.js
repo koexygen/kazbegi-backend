@@ -20,6 +20,7 @@ const createSendToken = (user, statusCode, res) => {
     ),
     httpOnly: true,
   };
+
   if (process.env.NODE_ENV === "production") cookieOptions.secure = true;
 
   res.cookie("jwt", token, cookieOptions);
@@ -35,7 +36,7 @@ const createSendToken = (user, statusCode, res) => {
   });
 };
 
-exports.signUp = catchAsync(async (req, res, next) => {
+exports.signUp = catchAsync(async (req, res) => {
   const newUser = await User.create(
     ({ name, email, role, password, passwordConfirm } = req.body)
   );
