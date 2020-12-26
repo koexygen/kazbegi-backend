@@ -3,11 +3,14 @@ const morgan = require("morgan");
 const AppError = require("./utils/appError");
 const globalErrorHandler = require("./controllers/errorController");
 const rateLimit = require("express-rate-limit");
+const helmet = require("helmet");
 
 const tourRouter = require("./routes/tourRoutes");
 const userRouter = require("./routes/userRoutes");
 
 const app = express();
+
+app.use(helmet());
 
 // 1) MIDDLEWARES
 if (process.env.NODE_ENV === "development") {
@@ -21,8 +24,7 @@ const limiter = rateLimit({
 });
 app.use("/api", limiter);
 
-// noinspection JSCheckFunctionSignatures
-app.use(express.json());
+app.use(express.json({ limit: "10kb" }));
 app.use(express.static(`${__dirname}/public`));
 
 app.use((req, res, next) => {
