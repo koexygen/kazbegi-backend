@@ -1,5 +1,5 @@
-process.on("uncaughtException", err => {
-  console.log(err.name, err.message);
+process.on("uncaughtException", (err) => {
+  console.log(err);
 
   process.exit(1);
 });
@@ -18,7 +18,7 @@ mongoose
   .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useFindAndModify: false
+    useFindAndModify: false,
   })
   .then(() => console.log("connected to database"));
 
@@ -28,7 +28,7 @@ const server = app.listen(port, () => {
   console.log(`App running on port ${port}...`);
 });
 
-process.on("unhandledRejection", err => {
+process.on("unhandledRejection", (err) => {
   console.log(err.name, err.message);
 
   server.close(() => {
