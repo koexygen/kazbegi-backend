@@ -1,6 +1,5 @@
 const mongoose = require("mongoose");
 const slugify = require("slugify");
-const User = require("./userModel");
 
 const tourSchema = new mongoose.Schema(
   {
@@ -93,7 +92,12 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: "User",
+      },
+    ],
   },
 
   {
@@ -112,15 +116,17 @@ tourSchema.pre("save", function (next) {
   next();
 });
 
-tourSchema.pre("save", async (req, res, next) => {
-  const guidesPromises = this.guides.map(async (id) => User.findById(id));
-  this.guides = await Promise.all(guidesPromises);
-
+tourSchema.post("save", function (doc, next) {
+  this.find({ secretTour: false });
   next();
 });
 
-tourSchema.post("save", function (doc, next) {
-  this.find({ secretTour: false });
+tourSchema.pre(/^find/, function (next) {
+  this.populate({
+    path: "guides",
+    select: "-__v -passwordChangedAt",
+  });
+
   next();
 });
 
