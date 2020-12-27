@@ -31,7 +31,7 @@ reviewSchema.pre(/^find/, async function (next) {
   this.populate({
     path: "author",
     select: "name photo",
-  }).populate({ path: "tour", select: "name" });
+  });
 
   next();
 });
