@@ -29,6 +29,7 @@ app.use(
     ],
   })
 );
+
 // 1) MIDDLEWARES
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));

@@ -14,14 +14,12 @@ mongoose
   .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
-    useFindAndModify: false
+    useFindAndModify: false,
   })
   .then(() => console.log("DB connection successful!"));
 
 // READ JSON FILE
-const tours = JSON.parse(
-  fs.readFileSync(`${__dirname}/tours-simple.json`, "utf-8")
-);
+const tours = JSON.parse(fs.readFileSync(`${__dirname}/tours.json`, "utf-8"));
 
 // IMPORT DATA INTO DB
 const importData = async () => {
@@ -46,7 +44,7 @@ const deleteData = async () => {
 };
 
 if (process.argv[2] === "--import") {
-  importData().then(r => r);
+  importData().then((r) => r);
 } else if (process.argv[2] === "--delete") {
-  deleteData().then(r => r);
+  deleteData().then((r) => r);
 }
