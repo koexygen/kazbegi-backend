@@ -123,7 +123,7 @@ tourSchema.pre("save", function (next) {
 });
 
 tourSchema.post("save", function (doc, next) {
-  this.find({ secretTour: false });
+  // this.find({ secretTour: false });
   next();
 });
 

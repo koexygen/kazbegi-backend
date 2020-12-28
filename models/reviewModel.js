@@ -9,7 +9,7 @@ const reviewSchema = new mongoose.Schema(
       max: [5, "Maximum rating allowed 5"],
     },
     createdAt: { type: Date, default: Date.now },
-    author: {
+    user: {
       type: mongoose.Schema.ObjectId,
       ref: "User",
       required: [true, "Review must have an author."],
@@ -29,7 +29,7 @@ const reviewSchema = new mongoose.Schema(
 
 reviewSchema.pre(/^find/, async function (next) {
   this.populate({
-    path: "author",
+    path: "user",
     select: "name photo",
   });
 
